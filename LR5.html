@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторна робота №7 — Магічна куля</title>
+    <script>
+        let defaultImage = "MangoAduns.jpg";
+
+        let outcomes = [
+            {
+                image: "mal0mArka.png",
+                answers: ["mal0mArka каже: Voice massage","mal0mArka каже: дада","mal0mArka каже: bkb rfr","mal0mArka каже: Ти уб****ще","mal0mArka каже: Наложи собі в руки","mal0mArka каже: І він же послухає..."]
+            },
+            {
+                image: "Senx42.png",
+                answers: ["Senx42 каже: Роби контакт Б","Senx42 каже: 42","Senx42 каже: Поки не вивчиш інсту у вікно, навіть не думай","Senx42 каже: Тренеруйся","Senx42 каже: Без газяви і хрумки не розібратись"]
+            },
+            {
+                image: "chotkiy.jpg",
+                answers: ["chotkiy каже: Всьо чотко","chotkiy каже: Я в кебабной","chotkiy каже: А ти харош","chotkiy каже: Все одно що ті що ті д***и","chotkiy каже: Хз хз"]
+            },
+            {
+                image: "$omple.jpg",
+                answers: ["$omple каже: Цифри знаєш","$omple каже: Ам ам ам","$omple каже: Колоть орешкі","$omple каже: Ні іди *****","$omple каже: Нормально чо","$omple каже: Ашібачка"]
+            },
+            {
+                image: "NoName.png",
+                answers: ["NoName каже: Скоро","NoName каже: ХМПФ!","NoName каже: Го","NoName каже: Не, не нужно такого","NoName каже: Но не наверняка","NoName каже: Не цікавлюсь такой фігней"]
+            }
+        ];
+
+        function initStyles() {
+            let style = document.createElement("style");
+            style.textContent = `
+                * {
+                    box-sizing: border-box;
+                    margin: 0;
+                    padding: 0;
+                }
+
+                body {
+                    min-height: 100vh;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    background-color: #050814;
+                    font-family: Arial, sans-serif;
+                    padding: 15px;
+                }
+
+                .container {
+                    width: 100%;
+                    max-width: 520px;
+                    background-color: #091026;
+                    border: 3px solid transparent;
+                    border-image: linear-gradient(135deg, #00d2ff, #7a28cb, #4caf50) 1;
+                    padding: 25px 20px 35px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 15px;
+                    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+                }
+
+                .title-text {
+                    color: #f3e5ff;
+                    font-size: clamp(16px, 3.5vw, 22px);
+                    font-weight: bold;
+                    text-align: center;
+                    line-height: 1.3;
+                    text-shadow: 0 0 10px rgba(155, 89, 182, 0.8);
+                }
+
+                .question-input {
+                    width: 100%;
+                    max-width: 420px;
+                    padding: 12px 20px;
+                    border-radius: 25px;
+                    border: none;
+                    outline: none;
+                    background-color: #f3e5ff;
+                    color: #1a1025;
+                    font-size: clamp(14px, 3vw, 18px);
+                    text-align: center;
+                }
+
+                .error-msg {
+                    color: #ff5c5c;
+                    font-size: 14px;
+                    min-height: 18px;
+                    text-align: center;
+                }
+
+                .magic-ball {
+                    width: min(75vw, 360px);
+                    height: min(75vw, 360px);
+                    border-radius: 50%;
+                    position: relative;
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    text-align: center;
+                    padding: 25px;
+                    background-size: cover;
+                    background-position: center;
+                    box-shadow:
+                        inset 0 0 35px rgba(0, 0, 0, 0.9),
+                        inset 15px 15px 30px rgba(255, 255, 255, 0.25),
+                        0 0 25px rgba(155, 89, 182, 0.5);
+                    transition: transform 0.15s ease;
+                    user-select: none;
+                    overflow: hidden;
+                }
+
+                .magic-ball:active {
+                    transform: scale(0.96);
+                }
+
+                .answer-text {
+                    color: #ffffff;
+                    font-size: clamp(20px, 5vw, 32px);
+                    font-weight: bold;
+                    text-shadow: 0 0 10px #000, 0 0 20px #9b59b6, 2px 2px 4px #000;
+                    z-index: 2;
+                    word-wrap: break-word;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        function initPage() {
+            initStyles();
+
+            let container = document.createElement("div");
+            container.className = "container";
+
+            let title = document.createElement("h2");
+            title.className = "title-text";
+            title.textContent = "Задай своє питання найкращій команді ЧНУ wW_42_MangoAdun$_67_Ww";
+
+            let input = document.createElement("input");
+            input.type = "text";
+            input.id = "question-input";
+            input.className = "question-input";
+            input.placeholder = "Введіть ваше питання...";
+
+            let errorMsg = document.createElement("div");
+            errorMsg.id = "error-msg";
+            errorMsg.className = "error-msg";
+
+            let ball = document.createElement("div");
+            ball.id = "magic-ball";
+            ball.className = "magic-ball";
+            ball.style.backgroundImage = "url('" + defaultImage + "')";
+            ball.onclick = askBall;
+
+            let answerText = document.createElement("span");
+            answerText.id = "answer-text";
+            answerText.className = "answer-text";
+            answerText.textContent = "";
+
+            ball.appendChild(answerText);
+            container.appendChild(title);
+            container.appendChild(input);
+            container.appendChild(errorMsg);
+            container.appendChild(ball);
+            document.body.appendChild(container);
+        }
+
+        function askBall() {
+            let input = document.getElementById("question-input");
+            let errorMsg = document.getElementById("error-msg");
+            let ball = document.getElementById("magic-ball");
+            let answerText = document.getElementById("answer-text");
+
+            let question = input.value.trim();
+
+            if (question === "") {
+                errorMsg.textContent = "Спочатку введіть питання!";
+                return;
+            }
+
+            if (!question.endsWith("?")) {
+                errorMsg.textContent = "Питання має закінчуватися знаком питання (?)";
+                return;
+            }
+
+            errorMsg.textContent = "";
+
+            let outcomeIndex = Math.floor(Math.random() * outcomes.length);
+            let selectedOutcome = outcomes[outcomeIndex];
+
+            let answerIndex = Math.floor(Math.random() * selectedOutcome.answers.length);
+            let selectedAnswer = selectedOutcome.answers[answerIndex];
+
+            ball.style.backgroundImage = "url('" + selectedOutcome.image + "')";
+            answerText.textContent = selectedAnswer;
+        }
+
+        window.onload = initPage;
+    </script>
+</head>
+<body></body>
+</html>
